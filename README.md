@@ -1,0 +1,2 @@
+# lanauth
+Авторизатор kabinet
