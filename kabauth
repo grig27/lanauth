@@ -1,0 +1,32 @@
+#!/bin/sh /etc/rc.common
+
+START=90
+STOP=10
+start() {
+	gateway=$(/sbin/uci get "network.wan.gateway" 2> /dev/null)
+	secret=$(/sbin/uci get "network.wan.password" 2> /dev/null)
+	
+	if [ "x${secret}" == "x" ]; then
+		echo "Error: 'network.wan.password' not defined"
+		echo
+		echo "Execute:"
+		echo "   uci set network.wan.password=<lanauth password>"
+		echo "   uci commit"
+		exit 1
+	fi
+	
+	if [ "x${gateway}" == "x" ]; then
+		echo "Error: 'network.wan.gateway' not defined"
+		echo
+		echo "Execute:"
+		echo "   uci set network.wan.gateway=<gateway ip address>"
+		echo "   uci commit"
+		exit 1
+	fi
+	
+	/bin/lanauth -p PassWord -l 2 -v 2
+}
+
+stop() {
+	killall lanauth
+}
